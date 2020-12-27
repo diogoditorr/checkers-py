@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 import pygame
 
 from .constants import BLACK, WHITE, GRAY, RED, ROWS, COLS, SQUARE_SIZE
@@ -17,16 +19,28 @@ class Board:
             for col in range(row % 2, ROWS, 2):
                 pygame.draw.rect(win, GRAY, (row*SQUARE_SIZE, col*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
     
-    def move(self, piece, row, col):
+    def evaluate(self):
+        return self.white_left - self.red_left + (self.white_kings * 1.5 - self.red_kings * 1.5)
+
+    def get_all_pieces(self, color: tuple):
+        pieces = []
+        for row in self.board:
+            for piece in row:
+                if piece != 0 and piece.color == color:
+                    pieces.append(piece)
+        return pieces
+
+    def move(self, piece: Piece, row, col):
         self.board[piece.row][piece.col], self.board[row][col] = self.board[row][col], self.board[piece.row][piece.col]
         piece.move(row, col)
 
-        if row == ROWS - 1 or row == 0:
-            piece.make_king()
-            if piece.color == WHITE:
-                self.white_kings += 1
-            else:
-                self.red_kings += 1
+        if not piece.king:
+            if row == ROWS - 1 or row == 0:
+                piece.make_king()
+                if piece.color == WHITE:
+                    self.white_kings += 1
+                else:
+                    self.red_kings += 1
 
     def get_piece(self, row, col):
          return self.board[row][col]
@@ -59,8 +73,12 @@ class Board:
             if piece != 0:
                 if piece.color == RED:
                     self.red_left -= 1
+                    if piece.king:
+                        self.red_kings -= 1
                 else:
                     self.white_left -= 1
+                    if piece.king:
+                        self.white_kings -= 1
 
     def winner(self):
         if self.red_left <= 0:
@@ -68,7 +86,22 @@ class Board:
         elif self.white_left <= 0:
             return RED
 
+        if not self.get_all_moves(RED):
+            return WHITE
+        elif not self.get_all_moves(WHITE):
+            return RED
+
         return None
+
+    def get_all_moves(self, color):
+        moves: List[Tuple[int, int]] = []
+
+        for piece in self.get_all_pieces(color):
+            valid_moves = self.get_valid_moves(piece)
+            if valid_moves:
+                moves.append(valid_moves)
+
+        return moves
 
     def get_valid_moves(self, piece):
         moves = {}
