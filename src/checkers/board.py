@@ -86,7 +86,7 @@ class Board:
 
         return moves
 
-    def _traverse_left(self, start: int, stop: int, step: int, color: tuple, left: int, skipped=[]):
+    def _traverse_left(self, start: int, stop: int, step: int, color: tuple, left: int, skipped: list=[]):
         moves = {}
         last = []
 
@@ -109,8 +109,8 @@ class Board:
                     else:
                         row = min(r + 3, ROWS)
 
-                    moves.update(self._traverse_left(r+step, row, step, color, left-1, skipped=last))
-                    moves.update(self._traverse_right(r+step, row, step, color, left+1, skipped=last))
+                    moves.update(self._traverse_left(r+step, row, step, color, left-1, skipped=last + skipped))
+                    moves.update(self._traverse_right(r+step, row, step, color, left+1, skipped=last + skipped))
                 break
 
             elif current.color == color:
@@ -145,8 +145,8 @@ class Board:
                     else:
                         row = min(r + 3, ROWS)
 
-                    moves.update(self._traverse_left(r+step, row, step, color, right-1, skipped=last))
-                    moves.update(self._traverse_right(r+step, row, step, color, right+1, skipped=last))
+                    moves.update(self._traverse_left(r+step, row, step, color, right-1, skipped=last + skipped))
+                    moves.update(self._traverse_right(r+step, row, step, color, right+1, skipped=last + skipped))
                 break
 
             elif current.color == color:
