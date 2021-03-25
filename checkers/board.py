@@ -20,7 +20,25 @@ class Board:
                 pygame.draw.rect(win, GRAY, (row*SQUARE_SIZE, col*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
     
     def evaluate(self):
-        return self.white_left - self.red_left + (self.white_kings * 1.5 - self.red_kings * 1.5)
+        # WHITE +
+        # RED -
+        value = float(0)
+
+        # WHITE getting pieces
+        value += 0.5 * 1.2**(12-self.red_left)
+        
+        # RED getting pieces
+        value += -0.5 * 1.2**(12-self.white_left)
+
+        # Kings
+        value += self.white_kings * 2.5 - self.red_kings * 2.5
+
+        if self.white_left == 0:
+            value += -99
+        elif self.red_left == 0:
+            value += 99
+
+        return value
 
     def get_all_pieces(self, color: tuple):
         pieces = []

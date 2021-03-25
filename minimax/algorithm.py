@@ -1,5 +1,5 @@
 import random
-from typing import List
+from typing import List, Tuple
 from copy import deepcopy
 
 import pygame
@@ -21,7 +21,7 @@ WHITE = (255, 255, 255)
 
 # return maxEval, best_board
 
-def minimax(board: Board, depth: int, max_player: bool, game) -> Board:
+def minimax(board: Board, depth: int, max_player: bool, game) -> Tuple[float, Board]:
     if depth == 0 or board.winner() != None:
         if not isinstance(board, Board):
             print(board)

@@ -24,16 +24,16 @@ def main():
         clock.tick(FPS)
 
         if game.turn == WHITE:
-            value, new_board = minimax(game.get_board(), 1, WHITE, game)
+            value, new_board = minimax(game.get_board(), 3, WHITE, game)
             print('1 - ' + str(value))
             game.ai_move(new_board)
             pygame.time.delay(800)
 
-        # else:
-        #     value, new_board = minimax(game.get_board(), 3, False, game)
-        #     print('2 - ' + str(value))
-        #     game.ai_move(new_board)
-        #     pygame.time.delay(800)
+        else:
+            value, new_board = minimax(game.get_board(), 3, False, game)
+            print('2 - ' + str(value))
+            game.ai_move(new_board)
+            pygame.time.delay(800)
         
         if game.winner() != None:
             print(f'Winner! {game.winner()}')
@@ -51,7 +51,7 @@ def main():
 
         game.update()
 
-    pygame.time.wait(5000)
+    pygame.time.wait(10000)
     pygame.quit()
 
 main()

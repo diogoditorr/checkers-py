@@ -68,7 +68,7 @@ class Game:
     def get_board(self):
         return self.board
 
-    def ai_move(self, board):
+    def ai_move(self, board: Board):
         if isinstance(board, Board):
             self.board = board
             self.change_turn()
