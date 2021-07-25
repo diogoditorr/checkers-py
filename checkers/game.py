@@ -1,4 +1,5 @@
 import pygame
+from copy import deepcopy
 
 from .constants import RED, WHITE, BLUE, SQUARE_SIZE
 from .board import Board
@@ -16,6 +17,10 @@ class Game:
     def _init(self):
         self.selected = None
         self.board = Board()
+        
+        self.board_history = []
+        self.board_history.append(deepcopy(self.board))
+
         self.turn = RED
         self.valid_moves = {}
 
@@ -29,6 +34,7 @@ class Game:
         if self.selected:
             result = self._move(row, col)
             if not result:
+                # If the selected row, col is not valid. Select the piece again.
                 self.selected = None
                 self.select(row, col)
             
@@ -44,9 +50,13 @@ class Game:
         piece = self.board.get_piece(row, col)
         if self.selected and piece == 0 and (row, col) in self.valid_moves:
             self.board.move(self.selected, row, col)
-            skipped = self.valid_moves[(row, col)]
-            if skipped:
-                self.board.remove(skipped)
+            
+            skipped_pieces = self.valid_moves[(row, col)]
+            if skipped_pieces:
+                self.board.remove(skipped_pieces)
+
+            self.board_history.append(deepcopy(self.board))
+
             self.change_turn()
         else:
             return False
@@ -71,4 +81,5 @@ class Game:
     def ai_move(self, board: Board):
         if isinstance(board, Board):
             self.board = board
+            self.board_history.append(deepcopy(board))
             self.change_turn()
